@@ -13,7 +13,6 @@ var list = document.querySelector('#list');
       var hiddenButton = document.createElement('input');
       formTag.method = 'POST';
       formTag.action = 'https://bb-election-api.herokuapp.com/vote';
-      // formTag.hiddenField = {'name': "name", 'value': candidate.name}
       submitButton.type = "submit";
       hiddenButton.setAttribute('type', "hidden");
       hiddenButton.setAttribute('name', "name");
@@ -23,6 +22,23 @@ var list = document.querySelector('#list');
       liTag.innerText = candidate.name + ', Votes: ' + candidate.votes;
       liTag.append(formTag);
       list.append(liTag);
+      formTag.addEventListener('submit', function(event){
+        event.preventDefault();
+        $.ajax({
+          url: 'https://bb-election-api.herokuapp.com/vote',
+          method: 'POST',
+          data: {'name':(this.querySelector('input[type=hidden]').value)},
+          datatype: 'json'
+        }).done(function(){
+          var refreshButton = document.createElement('button');
+          refreshButton.innerText = 'Refresh Vote Totals';
+          refreshButton.addEventListener('click', function(){
+            location.reload();
+          });
+          if (document.querySelector('button') === null){
+          document.body.append(refreshButton)};
+        }).fail(function(){});
+      });
     };
   });
 });
